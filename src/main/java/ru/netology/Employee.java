@@ -21,6 +21,10 @@ public class Employee {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "Employee{id="+id+
+                "' firstname='"+firstName+
+                "', lastname='"+lastName+
+                "', country='"+country+
+                "', age="+age;
     }
 }

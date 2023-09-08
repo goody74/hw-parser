@@ -8,16 +8,17 @@ import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvValidationException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,8 @@ public class Main {
         List<Employee> employeeList = parseXML("data.xml");
         String jsonXML = listToJson(employeeList);
         saveString(jsonXML, "data1.json");
+        json= readString("data1.json");
+        jsonToList(json);
 
     }
 
@@ -71,8 +74,7 @@ public class Main {
             writer.flush();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
-            return;
-        }
+            }
 
     }
 
@@ -105,4 +107,33 @@ public class Main {
         }
         return list;
     }
+    public static String readString(String fileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+
+            String s;
+            while ((s = br.readLine()) != null) {
+                return s;
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+          }
+    return null;
+    }
+
+    public static void jsonToList(String json){
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        Employee employee;
+        try {
+            JSONParser parser = new JSONParser();
+            JSONArray jsonArray = (JSONArray) parser.parse(json);
+            for (int i=0;i<jsonArray.size();i++){
+                employee =gson.fromJson(jsonArray.get(i).toString(),Employee.class);
+                System.out.println(employee.toString());
+            }
+
+        } catch (ParseException ex) {
+            System.out.println(ex.getMessage());
+        }
+      }
 }
